@@ -8,11 +8,12 @@ public class MoveForward : MonoBehaviour
     public float XLimit = 30;
 
     private PlayerController playerControllerScript;
+    private Animator thingAm;
     // Start is called before the first frame update
     void Start()
     {
         playerControllerScript = GameObject.Find("Player").GetComponent<PlayerController>();
-
+        thingAm = GetComponent<Animator>();
     }
 
     // Update is called once per frame
@@ -25,6 +26,10 @@ public class MoveForward : MonoBehaviour
             {
                 Destroy(gameObject);
             }
+        }
+        else if (thingAm != null)
+        {
+            thingAm.SetFloat("Speed_f", 0);
         }
     }
 }

@@ -17,6 +17,7 @@ public class PlayerController : MonoBehaviour
     public ParticleSystem explosion;
 
     private Vector3 min;
+    private Rigidbody playerRB;
     private AudioSource playerAudio;
     private Animator playerAnime;
     private LevelManager lm;
@@ -32,7 +33,8 @@ public class PlayerController : MonoBehaviour
         toLook = transform.rotation;
         lm = GameObject.Find("Level Manager").GetComponent<LevelManager>();
         playerAnime = GetComponent<Animator>();
-        Invoke("noGo", stepSpeed);
+        playerRB = GetComponent<Rigidbody>();
+        Invoke("noGo", stepSpeed + 0.1f);
     }
 
     // Update is called once per frame
@@ -100,8 +102,9 @@ public class PlayerController : MonoBehaviour
             toBe = transform.position;
             min = toBe;
             canGo = false;
-            Invoke("noGo", stepSpeed);
+            Invoke("noGo", stepSpeed + 0.1f);
             gameOver = false;
+            playerRB.velocity = Vector3.zero;
         }
     }
 
@@ -113,14 +116,16 @@ public class PlayerController : MonoBehaviour
             explosion.Play();
             playerAudio.PlayOneShot(deathSound, 1f);
             playerAnime.SetBool("Sit_b", true);
+            playerRB.velocity = Vector3.zero;
         } else if (other.gameObject.CompareTag("Goal")) {
             Debug.Log("Level " + lm.Level + " Passed!");
             lm.NextLevel();
             toBe = transform.position;
             min = toBe;
             canGo = false;
-            Invoke("noGo", stepSpeed);
+            Invoke("noGo", stepSpeed + 0.1f);
             playerAudio.PlayOneShot(goalSound, 1f);
+            playerRB.velocity = Vector3.zero;
         }
         //Debug.Log(other.gameObject.tag);
     }

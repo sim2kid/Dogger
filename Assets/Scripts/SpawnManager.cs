@@ -12,13 +12,13 @@ public class SpawnManager : MonoBehaviour
 
     private float spawnRate = 1;
     private PlayerController playerControllerScript;
-    private GameObject camera;
+    private GameObject theCamera;
 
     // Start is called before the first frame update
     void Start()
     {
         playerControllerScript = GameObject.Find("Player").GetComponent<PlayerController>();
-        camera = GameObject.Find("Main Camera");
+        theCamera = GameObject.Find("Main Camera");
         InvokeRepeating("SpawnObstacle", 0, spawnRate);
     }
 
@@ -30,14 +30,14 @@ public class SpawnManager : MonoBehaviour
 
     void SpawnObstacle() {
         float random = Random.Range(0, 100);
-        if (random <= spawnFrequency && !playerControllerScript.gameOver && Mathf.Abs(camera.transform.position.z - transform.position.z) < distance)
+        if (random <= spawnFrequency && !playerControllerScript.gameOver && Mathf.Abs(theCamera.transform.position.z - transform.position.z) < distance)
         {
             int temp = Random.Range(0, preFabs.Length);
             Instantiate(preFabs[temp], spawnPointOffsetLeft.transform.position, spawnPointOffsetLeft.transform.rotation);
         }
 
         random = Random.Range(0, 100);
-        if (random <= spawnFrequency && !playerControllerScript.gameOver && Mathf.Abs(camera.transform.position.z - transform.position.z) < distance)
+        if (random <= spawnFrequency && !playerControllerScript.gameOver && Mathf.Abs(theCamera.transform.position.z - transform.position.z) < distance)
         {
             int temp = Random.Range(0, preFabs.Length);
             Instantiate(preFabs[temp], spawnPointOffsetRight.transform.position, spawnPointOffsetRight.transform.rotation);
