@@ -34,7 +34,7 @@ public class PlayerController : MonoBehaviour
         lm = GameObject.Find("Level Manager").GetComponent<LevelManager>();
         playerAnime = GetComponent<Animator>();
         playerRB = GetComponent<Rigidbody>();
-        Invoke("noGo", stepSpeed + 0.1f);
+        Invoke("noGo", stepSpeed/2);
     }
 
     // Update is called once per frame
@@ -47,7 +47,7 @@ public class PlayerController : MonoBehaviour
             transform.rotation = Quaternion.RotateTowards(transform.rotation, toLook, 10);
         }
         playerAnime.SetFloat("Speed_f", Mathf.Abs(Vector3.Distance(toBe, transform.position)));
-        if (canGo && !gameOver)
+        if (canGo && !gameOver && !playerAnime.GetBool("Sit_b"))
         {
             if (Input.GetKey(KeyCode.W))
             {
@@ -102,7 +102,7 @@ public class PlayerController : MonoBehaviour
             toBe = transform.position;
             min = toBe;
             canGo = false;
-            Invoke("noGo", stepSpeed + 0.1f);
+            Invoke("noGo", stepSpeed/2);
             gameOver = false;
             playerRB.velocity = Vector3.zero;
         }
@@ -123,7 +123,7 @@ public class PlayerController : MonoBehaviour
             toBe = transform.position;
             min = toBe;
             canGo = false;
-            Invoke("noGo", stepSpeed + 0.1f);
+            Invoke("noGo", stepSpeed/2);
             playerAudio.PlayOneShot(goalSound, 1f);
             playerRB.velocity = Vector3.zero;
         }
