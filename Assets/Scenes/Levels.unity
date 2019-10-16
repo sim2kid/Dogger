@@ -607,7 +607,7 @@ MonoBehaviour:
     type: 3}
   EndLane: {fileID: 4327544041041892727, guid: 9fe26d5b70ca2324db3ef1d6b9598540, type: 3}
   step: 2
-  Level: 20
+  Level: 1
 --- !u!4 &1989246967
 Transform:
   m_ObjectHideFlags: 0
