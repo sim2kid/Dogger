@@ -8,7 +8,7 @@ public class PlayerController : MonoBehaviour
     public float step = 2;
     public float stepSpeed = 0.5f;
     public float xLimit = 11;
-    public float spawnSpeed = 3;
+    public float spawnSpeed = 0;
 
     public AudioClip moveSound;
     public AudioClip deathSound;
@@ -17,12 +17,14 @@ public class PlayerController : MonoBehaviour
     public ParticleSystem explosion;
 
     private Vector3 min;
+    private TextController text;
     private Rigidbody playerRB;
     private AudioSource playerAudio;
     private Animator playerAnime;
     private LevelManager lm;
     private Vector3 toBe;
     private Quaternion toLook;
+    private float horizontalInputs, verticalInpunts, fire1;
     private bool canGo = false;
     // Start is called before the first frame update
     void Start()
@@ -34,12 +36,16 @@ public class PlayerController : MonoBehaviour
         lm = GameObject.Find("Level Manager").GetComponent<LevelManager>();
         playerAnime = GetComponent<Animator>();
         playerRB = GetComponent<Rigidbody>();
+        text = GameObject.Find("Text").GetComponent<TextController>();
         Invoke("noGo", stepSpeed/2);
     }
 
     // Update is called once per frame
     void Update()
     {
+        horizontalInputs = Input.GetAxis("Horizontal");
+        verticalInpunts = Input.GetAxis("Vertical");
+        fire1 = Input.GetAxis("Reset");
 
         if (!gameOver)
         {
@@ -49,7 +55,7 @@ public class PlayerController : MonoBehaviour
         playerAnime.SetFloat("Speed_f", Mathf.Abs(Vector3.Distance(toBe, transform.position)));
         if (canGo && !gameOver && !playerAnime.GetBool("Sit_b"))
         {
-            if (Input.GetKey(KeyCode.W))
+            if (verticalInpunts > 0)
             {
                 toBe.z += step;
                 playerAudio.PlayOneShot(moveSound, 1f);
@@ -57,7 +63,7 @@ public class PlayerController : MonoBehaviour
                 Invoke("resetGo", stepSpeed);
                 toLook = Quaternion.AngleAxis(0, Vector3.up);
             }
-            if (Input.GetKey(KeyCode.S))
+            if (verticalInpunts < 0)
             {
                 toBe.z -= step;
                 playerAudio.PlayOneShot(moveSound, 1f);
@@ -65,7 +71,7 @@ public class PlayerController : MonoBehaviour
                 Invoke("resetGo", stepSpeed);
                 toLook = Quaternion.AngleAxis(180, Vector3.up);
             }
-            if (Input.GetKey(KeyCode.A))
+            if (horizontalInputs < 0)
             {
                 toBe.x -= step;
                 playerAudio.PlayOneShot(moveSound, 1f);
@@ -73,7 +79,7 @@ public class PlayerController : MonoBehaviour
                 Invoke("resetGo", stepSpeed);
                 toLook = Quaternion.AngleAxis(-90, Vector3.up);
             }
-            if (Input.GetKey(KeyCode.D))
+            if (horizontalInputs > 0)
             {
                 toBe.x += step;
                 playerAudio.PlayOneShot(moveSound, 1f);
@@ -95,7 +101,7 @@ public class PlayerController : MonoBehaviour
             toBe.z = min.z;
         }
 
-        if (Input.GetKey(KeyCode.Space) && gameOver)
+        if (fire1 > 0 && gameOver)
         {
             lm.Level = 0;
             lm.NextLevel();
@@ -112,13 +118,13 @@ public class PlayerController : MonoBehaviour
     {
         if (other.gameObject.CompareTag("Thing")) {
             gameOver = true;
-            Debug.Log("Game Over! Compleated " + (lm.Level-1) + " Levels!");
+            text.hold("Game Over! Compleated " + (lm.Level-1) + " Levels!");
             explosion.Play();
             playerAudio.PlayOneShot(deathSound, 1f);
             playerAnime.SetBool("Sit_b", true);
             playerRB.velocity = Vector3.zero;
         } else if (other.gameObject.CompareTag("Goal")) {
-            Debug.Log("Level " + lm.Level + " Passed!");
+            text.set("Level " + lm.Level + " Passed!");
             lm.NextLevel();
             toBe = transform.position;
             min = toBe;
@@ -137,6 +143,7 @@ public class PlayerController : MonoBehaviour
     {
         Invoke("resetGo", 4);
         playerAnime.SetBool("Sit_b", false);
+        text.set("");
     }
     void noGo()
     {
