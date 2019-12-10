@@ -17,7 +17,6 @@ public class PlayerController : MonoBehaviour
     public ParticleSystem explosion;
 
     private Vector3 min;
-    private TextController text;
     private Rigidbody playerRB;
     private AudioSource playerAudio;
     private Animator playerAnime;
@@ -26,9 +25,13 @@ public class PlayerController : MonoBehaviour
     private Quaternion toLook;
     private float horizontalInputs, verticalInpunts, fire1;
     private bool canGo = false;
+    private GameManager gm;
+    private FollowPlayer camera;
     // Start is called before the first frame update
     void Start()
     {
+        gm = GameObject.Find("GameManager").GetComponent<GameManager>();
+        camera = GameObject.Find("Main Camera").GetComponent<FollowPlayer>();
         playerAudio = GetComponent<AudioSource>();
         toBe = transform.position;
         min = toBe;
@@ -36,7 +39,6 @@ public class PlayerController : MonoBehaviour
         lm = GameObject.Find("Level Manager").GetComponent<LevelManager>();
         playerAnime = GetComponent<Animator>();
         playerRB = GetComponent<Rigidbody>();
-        text = GameObject.Find("Text").GetComponent<TextController>();
         Invoke("noGo", stepSpeed/2);
     }
 
@@ -53,7 +55,7 @@ public class PlayerController : MonoBehaviour
             transform.rotation = Quaternion.RotateTowards(transform.rotation, toLook, 10);
         }
         playerAnime.SetFloat("Speed_f", Mathf.Abs(Vector3.Distance(toBe, transform.position)));
-        if (canGo && !gameOver && !playerAnime.GetBool("Sit_b"))
+        if (canGo && !gameOver && !playerAnime.GetBool("Sit_b") && gm.Playable && camera.Following)
         {
             if (verticalInpunts > 0)
             {
@@ -100,36 +102,24 @@ public class PlayerController : MonoBehaviour
         if (toBe.z < min.z) {
             toBe.z = min.z;
         }
-
-        if (fire1 > 0 && gameOver)
-        {
-            lm.Level = 0;
-            lm.NextLevel();
-            toBe = transform.position;
-            min = toBe;
-            canGo = false;
-            Invoke("noGo", stepSpeed/2);
-            gameOver = false;
-            playerRB.velocity = Vector3.zero;
-        }
     }
 
     private void OnTriggerEnter(Collider other)
     {
         if (other.gameObject.CompareTag("Thing")) {
             gameOver = true;
-            text.hold("Game Over! Compleated " + (lm.Level-1) + " Levels!");
+            // Game Over   text.hold("Game Over! Compleated " + (lm.Level-1) + " Levels!");
+            gm.GameOver(lm.Level-1);
             explosion.Play();
             playerAudio.PlayOneShot(deathSound, 1f);
             playerAnime.SetBool("Sit_b", true);
             playerRB.velocity = Vector3.zero;
         } else if (other.gameObject.CompareTag("Goal")) {
-            text.set("Level " + lm.Level + " Passed!");
-            lm.NextLevel();
+            // Level Passes   text.set("Level " + lm.Level + " Passed!");
+            gm.LevelPassed(lm.Level);
             toBe = transform.position;
             min = toBe;
-            canGo = false;
-            Invoke("noGo", stepSpeed/2);
+            playerAnime.SetBool("Sit_b", true);
             playerAudio.PlayOneShot(goalSound, 1f);
             playerRB.velocity = Vector3.zero;
         }
@@ -139,16 +129,18 @@ public class PlayerController : MonoBehaviour
     void resetGo() {
         canGo = true;
     }
-    void letsGo()
-    {
-        Invoke("resetGo", 4);
-        playerAnime.SetBool("Sit_b", false);
-        text.set("");
-    }
     void noGo()
     {
-        Invoke("letsGo", spawnSpeed);
+        Invoke("resetGo", spawnSpeed);
         canGo = false;
-        playerAnime.SetBool("Sit_b", true);
+        playerAnime.SetBool("Sit_b", false);
+    }
+
+    public void backToSpawn() {
+        toBe = transform.position;
+        min = toBe;
+        gameOver = false;
+        playerRB.velocity = Vector3.zero;
+        playerAnime.SetBool("Sit_b", false);
     }
 }

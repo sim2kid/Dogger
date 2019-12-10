@@ -11,15 +11,22 @@ public class LevelManager : MonoBehaviour
     public GameObject EndLane;
     public float step = 2;
 
-    public int Level = 1;
+    public int Level = 0;
     // Start is called before the first frame update
     void Start()
     {
-        SetUpLevel();
+        NextLevel();
     }
 
     public void NextLevel() {
         Level++;
+        ResetLevel();
+        SetUpLevel();
+    }
+
+    public void NewGame(int level)
+    {
+        Level = level;
         ResetLevel();
         SetUpLevel();
     }
@@ -65,8 +72,17 @@ public class LevelManager : MonoBehaviour
         Instantiate(EndLane, new Vector3(0, 0, ZPos), EndLane.transform.rotation);
 
         GameObject player = GameObject.Find("Player");
+        GameObject camera = GameObject.Find("Main Camera");
         Vector3 spawnPoint = GameObject.Find("SpawnPoint").transform.position;
 
         player.transform.position = spawnPoint;
+        Invoke("camUpdate", 0.01f);
+    }
+
+    void camUpdate() {
+        GameObject camera = GameObject.Find("Main Camera");
+        Vector3 camSpawn = GameObject.Find("CamSpawn").transform.position;
+        camera.transform.position = camSpawn;
+        camera.GetComponent<FollowPlayer>().spawnZ = camSpawn.z;
     }
 }
