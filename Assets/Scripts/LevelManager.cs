@@ -32,10 +32,18 @@ public class LevelManager : MonoBehaviour
     }
 
     void ResetLevel() {
-        GameObject[] objs = GameObject.FindGameObjectsWithTag("Lane");
+        GameObject[] objs = GameObject.FindGameObjectsWithTag("SpawnManager");
+        for (int i = 0; i < objs.Length; i++)
+        {
+            SpawnManager sm = objs[i].GetComponent<SpawnManager>();
+            sm.DrainPool();
+        }
+
+        objs = GameObject.FindGameObjectsWithTag("Lane");
         for (int i = 0; i < objs.Length; i++) {
             Destroy(objs[i]);
         }
+
         objs = GameObject.FindGameObjectsWithTag("Thing");
         for (int i = 0; i < objs.Length; i++)
         {

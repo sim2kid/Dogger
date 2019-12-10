@@ -8,6 +8,7 @@ TagManager:
   - Thing
   - Goal
   - Lane
+  - SpawnManager
   layers:
   - Default
   - TransparentFX

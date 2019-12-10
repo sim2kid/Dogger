@@ -24,7 +24,7 @@ public class MoveForward : MonoBehaviour
             transform.Translate(Vector3.forward * speed * Time.deltaTime);
             if (transform.position.x > XLimit || transform.position.x < -XLimit)
             {
-                Destroy(gameObject);
+                gameObject.SetActive(false);
             }
         }
         else if (thingAm != null)

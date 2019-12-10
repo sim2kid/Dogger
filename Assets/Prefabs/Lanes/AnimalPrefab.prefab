@@ -168,7 +168,7 @@ GameObject:
   - component: {fileID: 324614746400032065}
   m_Layer: 0
   m_Name: SpawnManager
-  m_TagString: Untagged
+  m_TagString: SpawnManager
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -211,6 +211,7 @@ MonoBehaviour:
   spawnPointOffsetLeft: {fileID: 324614745567822969}
   spawnPointOffsetRight: {fileID: 324614746622490178}
   spawnFrequency: 25
+  distance: 30
 --- !u!1 &324614746622490178
 GameObject:
   m_ObjectHideFlags: 0
